@@ -30,9 +30,13 @@ const Sidebar = () => {
 
   return (
     <div className="w-64 bg-white text-gray-800 h-screen p-4 shadow-lg border border-gray-200">
-      <div className="mb-4">
-        {" "}
-        <h2 className="text-lg font-bold">Dashboard</h2>
+      <div className="mb-10 flex items-center">
+        {/* <img
+          src="/path/to/logo.png"
+          alt="Unique Company Logo"
+          className="h-10 w-10 mr-3"
+        /> */}
+        <h2 className="text-2xl font-bold text-blue-500">TechAds.</h2>
       </div>
       <nav>
         <ul>
