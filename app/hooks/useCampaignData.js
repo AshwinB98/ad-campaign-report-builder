@@ -10,7 +10,7 @@ export function useCampaignData() {
     const fetchData = async () => {
       try {
         const response = await axios.get("/api/campaigns");
-        setData(response.data);
+        setData(response.data.campaigns);
         setLoading(false);
       } catch (err) {
         setError(err);
