@@ -2,32 +2,72 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  @apply bg-secondary text-text-primary font-sans;
+  line-height: 1.6;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply text-text-primary font-bold;
+}
+
+a {
+  @apply text-primary hover:text-primary-dark;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+button {
+  @apply bg-primary text-white font-bold py-2 px-4 rounded-lg shadow-button;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  @apply bg-primary-dark;
+}
+
+/* Card styles */
+.card {
+  @apply bg-background-card p-6 rounded-lg shadow-card;
+}
+
+/* Utility classes for spacing */
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.mt-8 {
+  margin-top: 2rem;
+}
+
+/* Flex utilities */
+.flex-center {
+  @apply flex justify-center items-center;
+}
+
+.flex-column {
+  @apply flex flex-col;
+}
+
+/* Custom scrollbar for a better look in sidebar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
 }
