@@ -36,9 +36,36 @@ button:hover {
   @apply bg-background-card p-6 rounded-lg shadow-card;
 }
 
+/* Sidebar Styles */
+.sidebar {
+  @apply bg-white text-black;
+}
+
+.sidebar-header {
+  @apply flex items-center justify-between p-2 cursor-pointer transition-colors duration-300;
+}
+
+.sidebar-link {
+  @apply flex items-center space-x-2 p-2 rounded-lg;
+}
+
+/* Selected and Hover Styles */
+.selected {
+  @apply bg-primary text-white;
+}
+
+.not-selected {
+  @apply text-black hover:bg-gray-200;
+}
+
 /* Utility classes for spacing */
 .mt-2 {
   margin-top: 0.5rem;
+}
+
+/* Transition styles for collapsible sections */
+.collapsible {
+  @apply overflow-hidden transition-all duration-300 ease-in-out;
 }
 
 .mt-4 {
@@ -47,6 +74,15 @@ button:hover {
 
 .mt-8 {
   margin-top: 2rem;
+}
+
+/* Additional styling for the sidebar */
+.sidebar-header {
+  @apply flex items-center justify-between p-2 cursor-pointer;
+}
+
+.sidebar-link {
+  @apply flex items-center space-x-2 p-2 rounded-lg;
 }
 
 /* Flex utilities */
