@@ -10,19 +10,11 @@ const MetricsList = ({ activeTool }) => {
     { id: "6", name: "Cost Per Acquisition(CPA)" },
   ];
 
-  const displayMetrics =
-    activeTool === "chart"
-      ? metrics
-      : metrics.map((metric) => ({
-          ...metric,
-          name: `Avg. ${metric.name}`,
-        }));
-
   return (
     <div className="mt-4 pl-4">
       <h3 className="text-xs font-semibold text-gray-600 mb-2">Metrics</h3>
       <ul>
-        {displayMetrics.map((metric) => (
+        {metrics.map((metric) => (
           <li key={metric.id}>
             <DraggableMetric metric={metric} />
           </li>

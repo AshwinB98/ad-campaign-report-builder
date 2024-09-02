@@ -6,7 +6,7 @@ import NavSection from "../atoms/sidebar/NavSection";
 import SidebarHeader from "../atoms/sidebar/SideBarHeader";
 import ToolsSection from "../atoms/sidebar/ToolsSection";
 
-const Sidebar = ({ activeTool, setActiveTool }) => {
+const Sidebar = () => {
   const pathname = usePathname();
 
   return (
@@ -20,8 +20,8 @@ const Sidebar = ({ activeTool, setActiveTool }) => {
             label="Overview"
             isActive={pathname === "/"}
           />
-          <ToolsSection activeTool={activeTool} setActiveTool={setActiveTool} />
-          <MetricsList activeTool={activeTool} />
+          <ToolsSection />
+          <MetricsList />
         </ul>
       </nav>
     </div>

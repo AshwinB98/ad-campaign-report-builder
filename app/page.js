@@ -16,8 +16,6 @@ export default function HomePage() {
     region: "All Regions",
   });
 
-  const [activeTool, setActiveTool] = useState("chart");
-
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
   };
@@ -33,18 +31,14 @@ export default function HomePage() {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="flex min-h-screen">
-        <Sidebar activeTool={activeTool} setActiveTool={setActiveTool} />
+        <Sidebar />
         <div className="flex-1 flex flex-col bg-gray-100">
           <FilterBar
             campaigns={campaigns || []}
             onFilterChange={handleFilterChange}
           />
           <div className="flex-1 flex">
-            <DroppableCanvas
-              filters={filters}
-              activeTool={activeTool}
-              campaigns={campaigns}
-            />
+            <DroppableCanvas filters={filters} campaigns={campaigns} />
           </div>
         </div>
       </div>

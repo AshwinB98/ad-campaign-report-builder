@@ -6,7 +6,7 @@ import ChartRenderer from "../atoms/ChartRenderer";
 import useChartData from "../hooks/useChartData";
 import useDrillDownData from "../hooks/useDrilldownData";
 
-const DroppableCanvas = ({ activeTool, campaigns, filters }) => {
+const DroppableCanvas = ({ campaigns, filters }) => {
   const [{ isOver }, drop] = useDrop(() => ({
     accept: "METRIC",
     drop: (item) => onDropMetric(item.metric),
@@ -20,16 +20,14 @@ const DroppableCanvas = ({ activeTool, campaigns, filters }) => {
   const calculateDrillDownData = useDrillDownData(campaigns);
 
   const onDropMetric = (metric) => {
-    if (activeTool === "chart") {
-      const newChart = {
-        id: Date.now(),
-        metric,
-        type: "Bar",
-        data: calculateChartData([metric], campaigns, filters),
-        originalData: null,
-      };
-      setCharts((prevCharts) => [...prevCharts, newChart]);
-    }
+    const newChart = {
+      id: Date.now(),
+      metric,
+      type: "Bar",
+      data: calculateChartData([metric], campaigns, filters),
+      originalData: null,
+    };
+    setCharts((prevCharts) => [...prevCharts, newChart]);
   };
 
   const removeChart = (id) => {
