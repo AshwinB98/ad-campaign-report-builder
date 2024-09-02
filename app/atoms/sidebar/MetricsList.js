@@ -6,6 +6,8 @@ const MetricsList = ({ activeTool }) => {
     { id: "2", name: "Clicks" },
     { id: "3", name: "Conversions" },
     { id: "4", name: "Spend" },
+    { id: "5", name: "Click Through Rate(CTR)" },
+    { id: "6", name: "Cost Per Acquisition(CPA)" },
   ];
 
   const displayMetrics =
