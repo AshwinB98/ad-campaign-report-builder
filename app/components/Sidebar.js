@@ -18,11 +18,10 @@ import { useState } from "react";
 import DraggableMetric from "../atoms/DraggableMetric";
 import { useCampaignData } from "../hooks/useCampaignData";
 
-const Sidebar = () => {
+const Sidebar = ({ activeTool, setActiveTool }) => {
   const { data, loading, error } = useCampaignData();
   const router = useRouter();
   const [isCampaignsCollapsed, setIsCampaignsCollapsed] = useState(false);
-  const [activeTool, setActiveTool] = useState("chart");
 
   const metrics = [
     { id: "1", name: "Impressions" },
@@ -70,7 +69,7 @@ const Sidebar = () => {
               }`}
             >
               <HomeIcon className="h-5 w-5 font-semibold" />
-              <span className="text-sm font-semibold">Overall</span>
+              <span className="text-sm font-semibold">Overview</span>
             </Link>
           </li>
 

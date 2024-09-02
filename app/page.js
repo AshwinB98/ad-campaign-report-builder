@@ -18,6 +18,7 @@ export default function HomePage() {
   });
 
   const [metrics, setMetrics] = useState([]);
+  const [activeTool, setActiveTool] = useState("chart");
 
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
@@ -38,14 +39,19 @@ export default function HomePage() {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="flex min-h-screen">
-        <Sidebar />
+        <Sidebar activeTool={activeTool} setActiveTool={setActiveTool} />
         <div className="flex-1 flex flex-col bg-gray-100">
           <FilterBar
             campaigns={campaigns || []}
             onFilterChange={handleFilterChange}
           />
           <div className="flex-1 flex">
-            <DroppableCanvas metrics={metrics} onDrop={handleDrop} />
+            <DroppableCanvas
+              metrics={metrics}
+              onDrop={handleDrop}
+              activeTool={activeTool}
+              campaigns={campaigns} // Pass campaigns to the canvas for data calculations
+            />
           </div>
         </div>
       </div>
