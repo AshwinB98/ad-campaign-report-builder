@@ -5,6 +5,7 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
   HomeIcon,
+  InformationCircleIcon,
   WrenchIcon,
 } from "@heroicons/react/24/outline";
 import {
@@ -117,10 +118,14 @@ const Sidebar = () => {
           </li>
 
           {/* Tools Section */}
-          <li className="mt-6">
+          <li className="mt-2">
             <div className="flex items-center p-2">
               <WrenchIcon className="h-5 w-5 font-semibold text-gray-700" />
               <span className="text-sm font-semibold ml-2">Tools</span>
+            </div>
+            <div className="flex items-center bg-blue-500 p-1 rounded-md text-xs text-white pl-2 mt-1">
+              <InformationCircleIcon className="h-4 w-4 mr-1 text-white" />
+              <span>Customize your report by drag and drop</span>
             </div>
 
             <div className="flex space-x-2 mt-4 pl-8">
