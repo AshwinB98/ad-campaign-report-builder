@@ -43,6 +43,13 @@ const DroppableCanvas = ({ activeTool, campaigns, filters }) => {
   };
 
   const handleDrillDown = (metric, label, selectedCampaignId, chartId) => {
+    if (
+      metric.name.toLowerCase().includes("cpa") ||
+      metric.name.toLowerCase().includes("ctr")
+    ) {
+      return;
+    }
+
     setCharts((prevCharts) =>
       prevCharts.map((chart) => {
         if (chart.id === chartId && chart.type !== "Pie") {

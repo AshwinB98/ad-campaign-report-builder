@@ -1,73 +1,64 @@
+import {
+  calculateCPA,
+  calculateCTR,
+  getBackgroundColor,
+  getBorderColor,
+} from "../utils/common";
+
 const useChartData = () => {
   const calculateChartData = (selectedMetrics, campaigns, filters) => {
     const { dateRange, device, region } = filters;
-    const labels = [];
-    const campaignIds = [];
+
     const datasets = selectedMetrics.map((metric) => ({
       label: metric.name,
       data: [],
-      backgroundColor: [
-        "rgba(255, 165, 0, 0.4)",
-        "rgba(34, 139, 34, 0.4)",
-        "rgba(30, 144, 255, 0.4)",
-        "rgba(255, 99, 132, 0.4)",
-        "rgba(255, 205, 86, 0.4)",
-      ],
-      borderColor: [
-        "rgba(255, 165, 0, 1)",
-        "rgba(34, 139, 34, 1)",
-        "rgba(30, 144, 255, 1)",
-        "rgba(255, 99, 132, 1)",
-        "rgba(255, 205, 86, 1)",
-      ],
+      backgroundColor: getBackgroundColor(),
+      borderColor: getBorderColor(),
       borderWidth: 1,
     }));
 
-    campaigns.forEach((campaign) => {
-      let includeCampaign = false;
-      const filteredMetrics = [];
+    const result = campaigns.reduce(
+      (acc, campaign) => {
+        const { totalMetrics, hasData } = campaign.adGroups.reduce(
+          (adGroupAcc, adGroup) => {
+            const filteredMetrics = adGroup.metrics.filter((metric) =>
+              isMetricMatchingFilters(metric, dateRange, device, region)
+            );
 
-      campaign.adGroups.forEach((adGroup) => {
-        adGroup.metrics.forEach((metric) => {
-          const metricDate = new Date(metric.date);
-          const inDateRange =
-            metricDate >= new Date(dateRange[0]) &&
-            metricDate <= new Date(dateRange[1]);
-          const matchesDevice =
-            device === "All Devices" || metric.device === device;
-          const matchesRegion =
-            region === "All Regions" || metric.location === region;
-
-          if (inDateRange && matchesDevice && matchesRegion) {
-            includeCampaign = true;
-            filteredMetrics.push(metric);
+            return filteredMetrics.reduce(
+              (metricsAcc, metric) => ({
+                totalMetrics: aggregateMetrics(metricsAcc.totalMetrics, metric),
+                hasData: true,
+              }),
+              adGroupAcc
+            );
+          },
+          {
+            totalMetrics: {
+              spend: 0,
+              conversions: 0,
+              clicks: 0,
+              impressions: 0,
+            },
+            hasData: false,
           }
-        });
-      });
+        );
 
-      if (includeCampaign) {
-        labels.push(campaign.name);
-        campaignIds.push(campaign.campaignId);
+        if (hasData) {
+          acc.labels.push(campaign.name);
+          acc.campaignIds.push(campaign.campaignId);
+          updateDatasetData(datasets, selectedMetrics, totalMetrics);
+        }
 
-        selectedMetrics.forEach((selectedMetric, index) => {
-          let totalValue = 0;
-
-          filteredMetrics.forEach((metric) => {
-            const metricName = selectedMetric.name.toLowerCase();
-            if (metric[metricName] !== undefined) {
-              totalValue += metric[metricName];
-            }
-          });
-
-          datasets[index].data.push(totalValue);
-        });
-      }
-    });
+        return acc;
+      },
+      { labels: [], campaignIds: [] }
+    );
 
     return {
-      labels,
+      labels: result.labels,
       datasets,
-      campaignIds,
+      campaignIds: result.campaignIds,
     };
   };
 
@@ -75,3 +66,44 @@ const useChartData = () => {
 };
 
 export default useChartData;
+
+const isMetricMatchingFilters = (metric, dateRange, device, region) => {
+  const metricDate = new Date(metric.date);
+  const inDateRange =
+    metricDate >= new Date(dateRange[0]) &&
+    metricDate <= new Date(dateRange[1]);
+  const matchesDevice = device === "All Devices" || metric.device === device;
+  const matchesRegion = region === "All Regions" || metric.location === region;
+
+  return inDateRange && matchesDevice && matchesRegion;
+};
+
+const aggregateMetrics = (totalMetrics, metric) => ({
+  spend: totalMetrics.spend + (metric.spend || 0),
+  conversions: totalMetrics.conversions + (metric.conversions || 0),
+  clicks: totalMetrics.clicks + (metric.clicks || 0),
+  impressions: totalMetrics.impressions + (metric.impressions || 0),
+});
+
+const updateDatasetData = (datasets, selectedMetrics, totalMetrics) => {
+  selectedMetrics.forEach((selectedMetric, index) => {
+    let value = 0;
+    const metricName = selectedMetric.name.toLowerCase();
+
+    if (metricName.includes("cpa")) {
+      value = calculateCPA(totalMetrics.spend, totalMetrics.conversions);
+    } else if (metricName.includes("ctr")) {
+      value = calculateCTR(totalMetrics.clicks, totalMetrics.impressions);
+    } else if (metricName.includes("spend")) {
+      value = totalMetrics.spend;
+    } else if (metricName.includes("conversions")) {
+      value = totalMetrics.conversions;
+    } else if (metricName.includes("clicks")) {
+      value = totalMetrics.clicks;
+    } else if (metricName.includes("impressions")) {
+      value = totalMetrics.impressions;
+    }
+
+    datasets[index].data.push(value);
+  });
+};
