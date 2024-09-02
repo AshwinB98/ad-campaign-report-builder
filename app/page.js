@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import DroppableCanvas from "./components/DroppableCanvas";
 import FilterBar from "./components/FilterBar";
 import Sidebar from "./components/Sidebar";
 import { useCampaignData } from "./hooks/useCampaignData";
@@ -14,9 +17,14 @@ export default function HomePage() {
     searchTerm: "",
   });
 
+  const [metrics, setMetrics] = useState([]);
+
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
-    //need to be complete based on the required data
+  };
+
+  const handleDrop = (metric) => {
+    setMetrics([...metrics, metric]);
   };
 
   if (loading) {
@@ -28,18 +36,19 @@ export default function HomePage() {
   }
 
   return (
-    <div className="flex min-h-screen">
-      <Sidebar />
-      <div className="flex-1  bg-gray-100">
-        <FilterBar
-          campaigns={campaigns || []}
-          onFilterChange={handleFilterChange}
-        />
-        <div className="mt-8">
-          <h1 className="text-2xl font-bold">Campaign Dashboard</h1>
-          <p>Use the filter bar to customize the view of your campaign data.</p>
+    <DndProvider backend={HTML5Backend}>
+      <div className="flex min-h-screen">
+        <Sidebar />
+        <div className="flex-1 flex flex-col bg-gray-100">
+          <FilterBar
+            campaigns={campaigns || []}
+            onFilterChange={handleFilterChange}
+          />
+          <div className="flex-1 flex">
+            <DroppableCanvas metrics={metrics} onDrop={handleDrop} />
+          </div>
         </div>
       </div>
-    </div>
+    </DndProvider>
   );
 }
