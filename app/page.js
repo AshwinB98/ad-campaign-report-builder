@@ -11,12 +11,11 @@ import { useCampaignData } from "./hooks/useCampaignData";
 export default function HomePage() {
   const { data: campaigns, loading, error } = useCampaignData();
   const [filters, setFilters] = useState({
-    campaign: "All Campaigns",
-    dateRange: "Last Month",
-    searchTerm: "",
+    dateRange: [new Date(2024, 7, 1), new Date(2024, 7, 6)],
+    device: "All Devices",
+    region: "All Regions",
   });
 
-  const [metrics, setMetrics] = useState([]);
   const [activeTool, setActiveTool] = useState("chart");
 
   const handleFilterChange = (newFilters) => {
@@ -42,7 +41,7 @@ export default function HomePage() {
           />
           <div className="flex-1 flex">
             <DroppableCanvas
-              metrics={metrics}
+              filters={filters}
               activeTool={activeTool}
               campaigns={campaigns}
             />

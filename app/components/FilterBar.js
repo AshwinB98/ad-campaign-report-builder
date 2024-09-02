@@ -9,10 +9,12 @@ import "react-datepicker/dist/react-datepicker.css";
 import Dropdown from "../atoms/Dropdown";
 
 const FilterBar = ({ campaigns, onFilterChange }) => {
-  const [dateRange, setDateRange] = useState([new Date(), new Date()]);
+  const [dateRange, setDateRange] = useState([
+    new Date(2024, 7, 1),
+    new Date(2024, 7, 6),
+  ]);
   const [device, setDevice] = useState("All Devices");
   const [region, setRegion] = useState("All Regions");
-
   const [devices, setDevices] = useState([]);
   const [regions, setRegions] = useState([]);
 
@@ -44,10 +46,8 @@ const FilterBar = ({ campaigns, onFilterChange }) => {
   return (
     <div className="bg-white shadow-md p-3 flex items-center justify-between space-x-4">
       <div className="flex items-center space-x-4">
-        {/* "Filter by" Text */}
         <span className="text-xs font-light text-gray-700">Filter by:</span>
 
-        {/* Date Range Picker */}
         <div className="relative inline-block text-left">
           <div className="flex items-center space-x-2">
             <CalendarIcon className="h-4 w-4 text-gray-500" />
@@ -57,17 +57,16 @@ const FilterBar = ({ campaigns, onFilterChange }) => {
               startDate={dateRange[0]}
               endDate={dateRange[1]}
               selectsRange
+              dateFormat="yyyy-MM-dd"
               className="w-52 rounded-md border border-gray-300 shadow-sm px-3 py-1 text-xs font-light text-gray-700"
             />
           </div>
         </div>
 
-        {/* Device Filter */}
         <Dropdown
           title={
             <span className="flex items-center">
-              <DevicePhoneMobileIcon className="h-4 w-4 text-gray-500 mr-1" />{" "}
-              {/* Corrected icon */}
+              <DevicePhoneMobileIcon className="h-4 w-4 text-gray-500 mr-1" />
               {device}
             </span>
           }
@@ -78,7 +77,6 @@ const FilterBar = ({ campaigns, onFilterChange }) => {
           }}
         />
 
-        {/* Region Filter */}
         <Dropdown
           title={
             <span className="flex items-center">
@@ -94,10 +92,9 @@ const FilterBar = ({ campaigns, onFilterChange }) => {
         />
       </div>
 
-      {/* Export Button */}
       <div className="flex space-x-2">
         <button className="bg-primary text-white px-4 py-2 rounded-md shadow-sm text-xs font-light hover:bg-primary-dark">
-          Export
+          Export as CSV
         </button>
       </div>
     </div>

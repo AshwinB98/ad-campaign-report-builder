@@ -1,10 +1,10 @@
 import { XMarkIcon } from "@heroicons/react/24/solid";
-import "chart.js/auto";
-import { useState } from "react";
-import { Bar, Line, Pie } from "react-chartjs-2";
+import { useEffect, useState } from "react";
 import { useDrop } from "react-dnd";
+import ChartRenderer from "../atoms/ChartRenderer";
+import useChartData from "../hooks/useChartData";
 
-const DroppableCanvas = ({ onDrop, activeTool, campaigns }) => {
+const DroppableCanvas = ({ activeTool, campaigns, filters }) => {
   const [{ isOver }, drop] = useDrop(() => ({
     accept: "METRIC",
     drop: (item) => onDropMetric(item.metric),
@@ -14,6 +14,7 @@ const DroppableCanvas = ({ onDrop, activeTool, campaigns }) => {
   }));
 
   const [charts, setCharts] = useState([]);
+  const calculateChartData = useChartData();
 
   const onDropMetric = (metric) => {
     if (activeTool === "chart") {
@@ -21,7 +22,7 @@ const DroppableCanvas = ({ onDrop, activeTool, campaigns }) => {
         id: Date.now(),
         metric,
         type: "Bar",
-        data: calculateChartData([metric], campaigns),
+        data: calculateChartData([metric], campaigns, filters),
       };
       setCharts((prevCharts) => [...prevCharts, newChart]);
     }
@@ -37,83 +38,16 @@ const DroppableCanvas = ({ onDrop, activeTool, campaigns }) => {
     );
   };
 
-  const calculateChartData = (selectedMetrics, campaigns) => {
-    const labels = [];
-    const datasets = selectedMetrics.map((metric) => ({
-      label: metric.name,
-      data: [],
-      backgroundColor: [
-        "rgba(255, 165, 0, 0.4)",
-        "rgba(34, 139, 34, 0.4)",
-        "rgba(30, 144, 255, 0.4)",
-        "rgba(255, 99, 132, 0.4)",
-        "rgba(255, 205, 86, 0.4)",
-      ],
-      borderColor: [
-        "rgba(255, 165, 0, 1)",
-        "rgba(34, 139, 34, 1)",
-        "rgba(30, 144, 255, 1)",
-        "rgba(255, 99, 132, 1)",
-        "rgba(255, 205, 86, 1)",
-      ],
-      borderWidth: 1,
-    }));
-
-    campaigns.forEach((campaign) => {
-      labels.push(campaign.name);
-
-      selectedMetrics.forEach((selectedMetric, index) => {
-        let totalValue = 0;
-        campaign.adGroups.forEach((adGroup) => {
-          adGroup.metrics.forEach((metric) => {
-            const metricName = selectedMetric.name.toLowerCase();
-            if (metric[metricName] !== undefined) {
-              totalValue += metric[metricName];
-            }
-          });
-        });
-        datasets[index].data.push(totalValue);
-      });
-    });
-
-    return {
-      labels,
-      datasets,
-    };
-  };
-
-  const renderChart = (chart) => {
-    const ChartComponent =
-      chart.type === "Bar" ? Bar : chart.type === "Line" ? Line : Pie;
-
-    const chartOptions =
-      chart.type === "Pie"
-        ? {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                position: "right",
-              },
-            },
-          }
-        : {
-            scales: {
-              y: {
-                beginAtZero: true,
-              },
-            },
-          };
-
-    return (
-      <div
-        className={chart.type === "Pie" ? "h-96 w-96 mx-auto" : "w-full"}
-        style={chart.type === "Pie" ? { position: "relative" } : {}}
-      >
-        <ChartComponent data={chart.data} options={chartOptions} />
-      </div>
-    );
-  };
+  useEffect(() => {
+    if (charts.length > 0) {
+      setCharts((prevCharts) =>
+        prevCharts.map((chart) => ({
+          ...chart,
+          data: calculateChartData([chart.metric], campaigns, filters),
+        }))
+      );
+    }
+  }, [filters, campaigns]);
 
   return (
     <div
@@ -149,7 +83,7 @@ const DroppableCanvas = ({ onDrop, activeTool, campaigns }) => {
               </select>
             </div>
 
-            {renderChart(chart)}
+            <ChartRenderer chart={chart} />
           </div>
         ))}
       </div>
