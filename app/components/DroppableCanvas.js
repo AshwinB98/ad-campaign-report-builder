@@ -1,35 +1,61 @@
+import { XMarkIcon } from "@heroicons/react/24/solid";
 import "chart.js/auto";
-import { useEffect, useState } from "react";
-import { Bar } from "react-chartjs-2";
+import { useState } from "react";
+import { Bar, Line, Pie } from "react-chartjs-2";
 import { useDrop } from "react-dnd";
 
-const DroppableCanvas = ({ metrics, onDrop, activeTool, campaigns }) => {
+const DroppableCanvas = ({ onDrop, activeTool, campaigns }) => {
   const [{ isOver }, drop] = useDrop(() => ({
     accept: "METRIC",
-    drop: (item) => onDrop(item.metric),
+    drop: (item) => onDropMetric(item.metric),
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),
     }),
   }));
 
-  const [chartData, setChartData] = useState(null);
+  const [charts, setCharts] = useState([]);
 
-  useEffect(() => {
-    if (metrics.length > 0 && activeTool === "chart") {
-      const data = calculateChartData(metrics, campaigns);
-      setChartData(data);
-    } else {
-      setChartData(null);
+  const onDropMetric = (metric) => {
+    if (activeTool === "chart") {
+      const newChart = {
+        id: Date.now(),
+        metric,
+        type: "Bar",
+        data: calculateChartData([metric], campaigns),
+      };
+      setCharts((prevCharts) => [...prevCharts, newChart]);
     }
-  }, [metrics, activeTool, campaigns]);
+  };
+
+  const removeChart = (id) => {
+    setCharts((prevCharts) => prevCharts.filter((chart) => chart.id !== id));
+  };
+
+  const updateChartType = (id, type) => {
+    setCharts((prevCharts) =>
+      prevCharts.map((chart) => (chart.id === id ? { ...chart, type } : chart))
+    );
+  };
 
   const calculateChartData = (selectedMetrics, campaigns) => {
     const labels = [];
     const datasets = selectedMetrics.map((metric) => ({
       label: metric.name,
       data: [],
-      backgroundColor: "rgba(54, 162, 235, 0.2)",
-      borderColor: "rgba(54, 162, 235, 1)",
+      backgroundColor: [
+        "rgba(255, 165, 0, 0.4)",
+        "rgba(34, 139, 34, 0.4)",
+        "rgba(30, 144, 255, 0.4)",
+        "rgba(255, 99, 132, 0.4)",
+        "rgba(255, 205, 86, 0.4)",
+      ],
+      borderColor: [
+        "rgba(255, 165, 0, 1)",
+        "rgba(34, 139, 34, 1)",
+        "rgba(30, 144, 255, 1)",
+        "rgba(255, 99, 132, 1)",
+        "rgba(255, 205, 86, 1)",
+      ],
       borderWidth: 1,
     }));
 
@@ -56,27 +82,77 @@ const DroppableCanvas = ({ metrics, onDrop, activeTool, campaigns }) => {
     };
   };
 
+  const renderChart = (chart) => {
+    const ChartComponent =
+      chart.type === "Bar" ? Bar : chart.type === "Line" ? Line : Pie;
+
+    const chartOptions =
+      chart.type === "Pie"
+        ? {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: "right",
+              },
+            },
+          }
+        : {
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+            },
+          };
+
+    return (
+      <div
+        className={chart.type === "Pie" ? "h-96 w-96 mx-auto" : "w-full"}
+        style={chart.type === "Pie" ? { position: "relative" } : {}}
+      >
+        <ChartComponent data={chart.data} options={chartOptions} />
+      </div>
+    );
+  };
+
   return (
-    <div ref={drop} className={`flex-1 p-4 ${isOver ? "bg-blue-100" : ""}`}>
+    <div
+      ref={drop}
+      className={`flex-1 p-4 overflow-auto ${isOver ? "bg-blue-100" : ""}`}
+      style={{ maxHeight: "calc(100vh - 100px)" }}
+    >
       <h2 className="text-xl font-bold mb-4">Report Canvas</h2>
 
-      {chartData && (
-        <div className="bg-white p-4 rounded-xs shadow-lg max-w-md mx-auto">
-          <h3 className="text-lg font-semibold mb-4">
-            {metrics.map((metric) => metric.name).join(", ")}
-          </h3>
-          <Bar
-            data={chartData}
-            options={{
-              scales: {
-                y: {
-                  beginAtZero: true,
-                },
-              },
-            }}
-          />
-        </div>
-      )}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
+        {charts.map((chart, index) => (
+          <div
+            key={index}
+            className="bg-white p-6 rounded-lg shadow-lg relative"
+          >
+            <div className="cursor-pointer absolute top-4 right-4">
+              <XMarkIcon
+                onClick={() => removeChart(chart.id)}
+                className="h-5 w-5"
+              />
+            </div>
+            <h3 className="text-lg font-semibold mb-4">{chart.metric.name}</h3>
+
+            <div className="mb-4">
+              <select
+                value={chart.type}
+                onChange={(e) => updateChartType(chart.id, e.target.value)}
+                className="border border-gray-300 rounded p-1 text-sm"
+              >
+                <option value="Bar">Bar</option>
+                <option value="Line">Line</option>
+                <option value="Pie">Pie</option>
+              </select>
+            </div>
+
+            {renderChart(chart)}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

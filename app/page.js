@@ -10,7 +10,6 @@ import { useCampaignData } from "./hooks/useCampaignData";
 
 export default function HomePage() {
   const { data: campaigns, loading, error } = useCampaignData();
-
   const [filters, setFilters] = useState({
     campaign: "All Campaigns",
     dateRange: "Last Month",
@@ -22,10 +21,6 @@ export default function HomePage() {
 
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
-  };
-
-  const handleDrop = (metric) => {
-    setMetrics([...metrics, metric]);
   };
 
   if (loading) {
@@ -48,9 +43,8 @@ export default function HomePage() {
           <div className="flex-1 flex">
             <DroppableCanvas
               metrics={metrics}
-              onDrop={handleDrop}
               activeTool={activeTool}
-              campaigns={campaigns} // Pass campaigns to the canvas for data calculations
+              campaigns={campaigns}
             />
           </div>
         </div>
