@@ -1,8 +1,17 @@
-const chartOptions = (chartType) => {
+const chartOptions = (chartType, handleElementClick) => {
+  const commonOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    onClick: (event, elements) => {
+      if (handleElementClick && elements.length > 0) {
+        handleElementClick(event, elements);
+      }
+    },
+  };
+
   if (chartType === "Pie") {
     return {
-      responsive: true,
-      maintainAspectRatio: false,
+      ...commonOptions,
       plugins: {
         legend: {
           position: "right",
@@ -12,6 +21,7 @@ const chartOptions = (chartType) => {
   }
 
   return {
+    ...commonOptions,
     scales: {
       y: {
         beginAtZero: true,

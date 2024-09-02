@@ -2,6 +2,7 @@ const useChartData = () => {
   const calculateChartData = (selectedMetrics, campaigns, filters) => {
     const { dateRange, device, region } = filters;
     const labels = [];
+    const campaignIds = [];
     const datasets = selectedMetrics.map((metric) => ({
       label: metric.name,
       data: [],
@@ -46,6 +47,7 @@ const useChartData = () => {
 
       if (includeCampaign) {
         labels.push(campaign.name);
+        campaignIds.push(campaign.campaignId);
 
         selectedMetrics.forEach((selectedMetric, index) => {
           let totalValue = 0;
@@ -65,6 +67,7 @@ const useChartData = () => {
     return {
       labels,
       datasets,
+      campaignIds,
     };
   };
 
