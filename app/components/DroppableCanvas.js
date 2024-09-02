@@ -1,42 +1,74 @@
 import { InboxIcon } from "@heroicons/react/24/outline";
-import { ArrowLeftIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDrop } from "react-dnd";
-import ChartRenderer from "../atoms/ChartRenderer";
+import GridLayout from "react-grid-layout";
+import "react-grid-layout/css/styles.css";
+import "react-resizable/css/styles.css";
+import ChartCard from "../atoms/canvas/ChartCard";
 import useChartData from "../hooks/useChartData";
+import useContainerDimensions from "../hooks/useContainerDimensions";
 import useDrillDownData from "../hooks/useDrilldownData";
+import useDropMetricHandler from "../hooks/useDropMetricHandler";
 
 const DroppableCanvas = ({ campaigns, filters }) => {
-  const [{ isOver }, drop] = useDrop(() => ({
-    accept: "METRIC",
-    drop: (item) => onDropMetric(item.metric),
-    collect: (monitor) => ({
-      isOver: !!monitor.isOver(),
-    }),
-  }));
-
+  const containerRef = useRef(null);
+  const containerWidth = useContainerDimensions(containerRef);
   const [charts, setCharts] = useState([]);
+  const [layout, setLayout] = useState([]);
   const calculateChartData = useChartData();
   const calculateDrillDownData = useDrillDownData(campaigns);
 
-  const onDropMetric = (metric) => {
-    const newChart = {
-      id: Date.now(),
-      metric,
-      type: "Bar",
-      data: calculateChartData([metric], campaigns, filters),
-      originalData: null,
-    };
-    setCharts((prevCharts) => [...prevCharts, newChart]);
-  };
+  const handleDropMetric = useDropMetricHandler(
+    containerWidth,
+    setCharts,
+    setLayout,
+    calculateChartData,
+    campaigns,
+    filters
+  );
+
+  const [{ isOver }, drop] = useDrop({
+    accept: "METRIC",
+    drop: (item, monitor) => {
+      const offset = monitor.getClientOffset();
+      if (offset && containerRef.current) {
+        const dropX =
+          offset.x - containerRef.current.getBoundingClientRect().left;
+        const dropY =
+          offset.y - containerRef.current.getBoundingClientRect().top;
+        handleDropMetric(item.metric, dropX, dropY);
+      }
+    },
+    collect: (monitor) => ({
+      isOver: !!monitor.isOver(),
+    }),
+  });
 
   const removeChart = (id) => {
     setCharts((prevCharts) => prevCharts.filter((chart) => chart.id !== id));
+    setLayout((prevLayout) =>
+      prevLayout.filter((item) => item.i !== String(id))
+    );
   };
 
   const updateChartType = (id, type) => {
     setCharts((prevCharts) =>
       prevCharts.map((chart) => (chart.id === id ? { ...chart, type } : chart))
+    );
+  };
+
+  const handleGoBack = (id) => {
+    setCharts((prevCharts) =>
+      prevCharts.map((chart) => {
+        if (chart.id === id && chart.originalData) {
+          return {
+            ...chart,
+            data: chart.originalData,
+            originalData: null,
+          };
+        }
+        return chart;
+      })
     );
   };
 
@@ -67,19 +99,8 @@ const DroppableCanvas = ({ campaigns, filters }) => {
     );
   };
 
-  const handleGoBack = (id) => {
-    setCharts((prevCharts) =>
-      prevCharts.map((chart) => {
-        if (chart.id === id && chart.originalData) {
-          return {
-            ...chart,
-            data: chart.originalData,
-            originalData: null,
-          };
-        }
-        return chart;
-      })
-    );
+  const onLayoutChange = (newLayout) => {
+    setLayout(newLayout);
   };
 
   useEffect(() => {
@@ -99,62 +120,51 @@ const DroppableCanvas = ({ campaigns, filters }) => {
       className={`flex-1 p-4 overflow-auto ${isOver ? "bg-blue-100" : ""}`}
       style={{ maxHeight: "calc(100vh - 100px)" }}
     >
-      {charts.length === 0 ? (
-        <div className="flex flex-col justify-center items-center h-full text-gray-500">
-          <InboxIcon className="h-24 w-24 mb-4" />
-          <p className="text-lg font-semibold">
-            Drag and Drop the metrics to create a customized report
-          </p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
-          {charts.map((chart, index) => (
-            <div
-              key={index}
-              className="bg-white p-6 border border-gray-300 rounded-sm shadow-sm relative  h-full"
-              style={{ overflow: "hidden" }}
-            >
-              <div className="cursor-pointer absolute top-4 right-4">
-                <XMarkIcon
-                  onClick={() => removeChart(chart.id)}
-                  className="h-5 w-5"
+      <div
+        ref={containerRef}
+        style={{
+          position: "relative",
+          width: "100%",
+          height: "100%",
+        }}
+      >
+        {charts.length === 0 ? (
+          <div className="flex flex-col justify-center items-center h-full text-gray-500">
+            <InboxIcon className="h-24 w-24 mb-4" />
+            <p className="text-lg font-semibold">
+              Drag and Drop the metrics to create a customized report
+            </p>
+          </div>
+        ) : (
+          <GridLayout
+            className="layout"
+            layout={layout}
+            cols={Math.floor(containerWidth / 100)}
+            rowHeight={30}
+            width={containerWidth}
+            onLayoutChange={onLayoutChange}
+            draggableHandle=".drag-handle"
+            compactType="vertical"
+            isResizable={true}
+            isDraggable={true}
+          >
+            {charts.map((chart) => (
+              <div
+                key={chart.id}
+                data-grid={layout.find((item) => item.i === String(chart.id))}
+              >
+                <ChartCard
+                  chart={chart}
+                  removeChart={removeChart}
+                  updateChartType={updateChartType}
+                  handleGoBack={handleGoBack}
+                  handleDrillDown={handleDrillDown}
                 />
               </div>
-              <h3 className="text-lg font-semibold mb-4">
-                {chart.metric.name}
-              </h3>
-
-              <div className="mb-4 flex justify-between items-center">
-                <select
-                  value={chart.type}
-                  onChange={(e) => updateChartType(chart.id, e.target.value)}
-                  className="border border-gray-300 rounded p-1 text-sm"
-                >
-                  <option value="Bar">Bar</option>
-                  <option value="Line">Line</option>
-                  <option value="Pie">Pie</option>
-                </select>
-                {chart.originalData && (
-                  <div
-                    onClick={() => handleGoBack(chart.id)}
-                    className="flex items-center cursor-pointer text-blue-500"
-                  >
-                    <ArrowLeftIcon className="h-5 w-5 mr-1" />
-                    <span className="text-sm">Back</span>
-                  </div>
-                )}
-              </div>
-
-              <ChartRenderer
-                chart={chart}
-                onDrillDown={(metric, label, selectedCampaignId) =>
-                  handleDrillDown(metric, label, selectedCampaignId, chart.id)
-                }
-              />
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </GridLayout>
+        )}
+      </div>
     </div>
   );
 };
