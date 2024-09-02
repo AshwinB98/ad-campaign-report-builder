@@ -44,7 +44,7 @@ const FilterBar = ({ campaigns, onFilterChange }) => {
   };
 
   return (
-    <div className="bg-white shadow-md p-3 flex items-center justify-between space-x-4">
+    <div className="bg-white border-b border-gray-300 p-3 flex items-center justify-between space-x-4">
       <div className="flex items-center space-x-4">
         <span className="text-xs font-light text-gray-700">Filter by:</span>
 

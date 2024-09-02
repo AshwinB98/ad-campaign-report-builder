@@ -5,7 +5,6 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
   HomeIcon,
-  InformationCircleIcon,
   WrenchIcon,
 } from "@heroicons/react/24/outline";
 import {
@@ -30,7 +29,6 @@ const Sidebar = ({ activeTool, setActiveTool }) => {
     { id: "4", name: "Spend" },
   ];
 
-  // Modify metrics based on active tool
   const displayMetrics =
     activeTool === "chart"
       ? metrics
@@ -52,13 +50,12 @@ const Sidebar = ({ activeTool, setActiveTool }) => {
   }
 
   return (
-    <div className="w-64 bg-white text-gray-800 h-screen p-4 shadow-lg border border-gray-200">
+    <div className="w-64 bg-white text-gray-800 h-screen p-4 border-r border-gray-300">
       <div className="mb-10 flex items-center">
         <h2 className="text-2xl font-bold text-blue-500">TechAds.</h2>
       </div>
       <nav>
         <ul>
-          {/* Overall Section */}
           <li className="mb-2">
             <Link
               href="/"
@@ -73,7 +70,6 @@ const Sidebar = ({ activeTool, setActiveTool }) => {
             </Link>
           </li>
 
-          {/* Campaigns Section */}
           <li className="mb-2">
             <div
               className="flex items-center justify-between p-2 cursor-pointer transition-colors duration-300"
@@ -116,18 +112,12 @@ const Sidebar = ({ activeTool, setActiveTool }) => {
             </div>
           </li>
 
-          {/* Tools Section */}
           <li className="mt-2">
             <div className="flex items-center p-2">
               <WrenchIcon className="h-5 w-5 font-semibold text-gray-700" />
               <span className="text-sm font-semibold ml-2">Tools</span>
             </div>
-            <div className="flex items-center bg-blue-500 p-1 rounded-md text-xs text-white pl-2 mt-1">
-              <InformationCircleIcon className="h-4 w-4 mr-1 text-white" />
-              <span>Customize your report by drag and drop</span>
-            </div>
-
-            <div className="flex space-x-2 mt-4 pl-8">
+            <div className="flex space-x-2 mt-1 pl-8">
               <div
                 className={`cursor-pointer p-1 rounded-lg ${
                   activeTool === "chart"
