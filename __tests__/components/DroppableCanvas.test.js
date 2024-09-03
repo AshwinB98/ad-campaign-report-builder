@@ -3,16 +3,23 @@ import { DndProvider } from "react-dnd";
 import { TestBackend } from "react-dnd-test-backend";
 import DroppableCanvas from "../../app/components/DroppableCanvas";
 
-jest.mock("../../app/atoms/canvas/ChartCard", () => ({ chart }) => (
-  <div>
-    {chart.metric.name}
-    <select defaultValue="Bar">
-      <option value="Bar">Bar</option>
-      <option value="Line">Line</option>
-      <option value="Pie">Pie</option>
-    </select>
-  </div>
-));
+jest.mock("../../app/atoms/canvas/ChartCard", () => {
+  const MockChartCard = ({ chart }) => (
+    <div>
+      {chart.metric.name}
+      <select defaultValue="Bar">
+        <option value="Bar">Bar</option>
+        <option value="Line">Line</option>
+        <option value="Pie">Pie</option>
+      </select>
+    </div>
+  );
+
+  MockChartCard.displayName = "MockChartCard";
+
+  return MockChartCard;
+});
+
 jest.mock("../../app/hooks/useDrilldownData", () => () => jest.fn());
 jest.mock("../../app/hooks/useContainerDimensions", () => () => 1000);
 jest.mock("../../app/hooks/useDropMetricHandler", () => jest.fn());
