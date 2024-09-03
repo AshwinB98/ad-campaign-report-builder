@@ -6,10 +6,12 @@ export function useCampaignData() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("/api/campaigns");
+        const response = await axios.get(`${baseURL}/campaigns`);
         setData(response.data.campaigns);
         setLoading(false);
       } catch (err) {

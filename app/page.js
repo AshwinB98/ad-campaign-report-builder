@@ -24,7 +24,7 @@ export default function HomePage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <Spinner size="50" color="blue-500" />
+        <Spinner />
       </div>
     );
   }
