@@ -90,7 +90,14 @@ const DroppableCanvas = ({ campaigns, filters, charts, setCharts }) => {
           return {
             ...chart,
             originalData: chart.originalData || chart.data,
-            data: drillDownData,
+            data: {
+              ...drillDownData,
+              datasets: drillDownData.datasets.map((dataset) => ({
+                ...dataset,
+                backgroundColor: chart.data.datasets[0].backgroundColor,
+                borderColor: chart.data.datasets[0].borderColor,
+              })),
+            },
           };
         }
         return chart;
@@ -159,6 +166,7 @@ const DroppableCanvas = ({ campaigns, filters, charts, setCharts }) => {
                   updateChartType={updateChartType}
                   handleGoBack={handleGoBack}
                   handleDrillDown={handleDrillDown}
+                  setCharts={setCharts}
                 />
               </div>
             ))}

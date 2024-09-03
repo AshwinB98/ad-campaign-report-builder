@@ -30,4 +30,24 @@ const chartOptions = (chartType, handleElementClick) => {
   };
 };
 
-export default chartOptions;
+const updateChartColors = (id, bgColor, borderColor, setCharts) => {
+  setCharts((prevCharts) =>
+    prevCharts.map((chart) =>
+      chart.id === id
+        ? {
+            ...chart,
+            data: {
+              ...chart.data,
+              datasets: chart.data.datasets.map((dataset) => ({
+                ...dataset,
+                backgroundColor: bgColor,
+                borderColor: borderColor,
+              })),
+            },
+          }
+        : chart
+    )
+  );
+};
+
+export { chartOptions, updateChartColors };

@@ -1,6 +1,6 @@
 import "chart.js/auto";
 import { Bar, Line, Pie } from "react-chartjs-2";
-import chartOptions from "../../utils/ChartOptions";
+import { chartOptions } from "../../utils/ChartOptions";
 
 const ChartRenderer = ({ chart, onDrillDown }) => {
   const ChartComponent =
