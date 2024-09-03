@@ -1,4 +1,4 @@
-import { InboxIcon } from "@heroicons/react/24/outline";
+import { InboxIcon } from "@heroicons/react/24/solid";
 import { useEffect, useRef, useState } from "react";
 import { useDrop } from "react-dnd";
 import GridLayout from "react-grid-layout";
@@ -10,10 +10,9 @@ import useContainerDimensions from "../hooks/useContainerDimensions";
 import useDrillDownData from "../hooks/useDrilldownData";
 import useDropMetricHandler from "../hooks/useDropMetricHandler";
 
-const DroppableCanvas = ({ campaigns, filters }) => {
+const DroppableCanvas = ({ campaigns, filters, charts, setCharts }) => {
   const containerRef = useRef(null);
   const containerWidth = useContainerDimensions(containerRef);
-  const [charts, setCharts] = useState([]);
   const [layout, setLayout] = useState([]);
   const calculateChartData = useChartData();
   const calculateDrillDownData = useDrillDownData(campaigns);
@@ -151,6 +150,7 @@ const DroppableCanvas = ({ campaigns, filters }) => {
             {charts.map((chart) => (
               <div
                 key={chart.id}
+                id={`chart-${chart.id}`}
                 data-grid={layout.find((item) => item.i === String(chart.id))}
               >
                 <ChartCard

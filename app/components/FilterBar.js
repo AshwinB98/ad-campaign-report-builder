@@ -9,7 +9,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import Dropdown from "../atoms/Dropdown";
 import "../globals.css";
 
-const FilterBar = ({ campaigns, onFilterChange }) => {
+const FilterBar = ({ campaigns, onFilterChange, exportPDF, canExportPDF }) => {
   const [dateRange, setDateRange] = useState([
     new Date(2024, 7, 1),
     new Date(2024, 7, 6),
@@ -94,8 +94,16 @@ const FilterBar = ({ campaigns, onFilterChange }) => {
       </div>
 
       <div className="flex space-x-2">
-        <button className="bg-primary text-white px-4 py-2 rounded-md shadow-sm text-xs md:text-sm font-light hover:bg-primary-dark">
-          Export as CSV
+        <button
+          onClick={exportPDF}
+          className={`bg-primary text-white px-4 py-2 rounded-md shadow-sm text-xs md:text-sm font-light ${
+            canExportPDF
+              ? "hover:bg-primary-dark"
+              : "cursor-not-allowed opacity-50"
+          }`}
+          disabled={!canExportPDF}
+        >
+          Export as PDF
         </button>
       </div>
     </div>

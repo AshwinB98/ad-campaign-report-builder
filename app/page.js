@@ -8,6 +8,7 @@ import DroppableCanvas from "./components/DroppableCanvas";
 import FilterBar from "./components/FilterBar";
 import Sidebar from "./components/Sidebar";
 import { useCampaignData } from "./hooks/useCampaignData";
+import { exportPDF } from "./utils/ExportPdf";
 
 export default function HomePage() {
   const { data: campaigns, loading, error } = useCampaignData();
@@ -16,6 +17,7 @@ export default function HomePage() {
     device: "All Devices",
     region: "All Regions",
   });
+  const [charts, setCharts] = useState([]);
 
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
@@ -45,9 +47,16 @@ export default function HomePage() {
           <FilterBar
             campaigns={campaigns || []}
             onFilterChange={handleFilterChange}
+            exportPDF={() => exportPDF(charts)}
+            canExportPDF={charts.length > 0}
           />
           <div className="flex-1 flex">
-            <DroppableCanvas filters={filters} campaigns={campaigns} />
+            <DroppableCanvas
+              filters={filters}
+              campaigns={campaigns}
+              charts={charts}
+              setCharts={setCharts}
+            />
           </div>
         </div>
       </div>
