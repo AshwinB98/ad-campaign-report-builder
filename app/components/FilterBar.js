@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Dropdown from "../atoms/Dropdown";
+import "../globals.css";
 
 const FilterBar = ({ campaigns, onFilterChange }) => {
   const [dateRange, setDateRange] = useState([
@@ -58,7 +59,7 @@ const FilterBar = ({ campaigns, onFilterChange }) => {
               endDate={dateRange[1]}
               selectsRange
               dateFormat="yyyy-MM-dd"
-              className="w-40 md:w-52 rounded-md border border-gray-300 shadow-sm px-3 py-1 text-xs font-light text-gray-700"
+              className="custom-datepicker-input"
             />
           </div>
         </div>
