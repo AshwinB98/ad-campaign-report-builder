@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import Spinner from "./atoms/common/Spinner";
 import DroppableCanvas from "./components/DroppableCanvas";
 import FilterBar from "./components/FilterBar";
 import Sidebar from "./components/Sidebar";
@@ -21,11 +22,19 @@ export default function HomePage() {
   };
 
   if (loading) {
-    return <div>Loading campaigns...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner size="50" color="blue-500" />
+      </div>
+    );
   }
 
   if (error) {
-    return <div>Error loading campaigns: {error.message}</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        Error loading campaigns: {error.message}
+      </div>
+    );
   }
 
   return (

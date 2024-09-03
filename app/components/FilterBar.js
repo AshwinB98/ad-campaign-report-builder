@@ -44,8 +44,8 @@ const FilterBar = ({ campaigns, onFilterChange }) => {
   };
 
   return (
-    <div className="bg-white border-b border-gray-300 p-3 flex items-center justify-between space-x-4">
-      <div className="flex items-center space-x-4">
+    <div className="bg-white border-b border-gray-300 p-3 flex flex-wrap items-center justify-between space-y-3 md:space-y-0 md:space-x-4">
+      <div className="flex flex-wrap items-center space-x-4">
         <span className="text-xs font-light text-gray-700">Filter by:</span>
 
         <div className="relative inline-block text-left">
@@ -58,7 +58,7 @@ const FilterBar = ({ campaigns, onFilterChange }) => {
               endDate={dateRange[1]}
               selectsRange
               dateFormat="yyyy-MM-dd"
-              className="w-52 rounded-md border border-gray-300 shadow-sm px-3 py-1 text-xs font-light text-gray-700"
+              className="w-40 md:w-52 rounded-md border border-gray-300 shadow-sm px-3 py-1 text-xs font-light text-gray-700"
             />
           </div>
         </div>
@@ -67,7 +67,7 @@ const FilterBar = ({ campaigns, onFilterChange }) => {
           title={
             <span className="flex items-center">
               <DevicePhoneMobileIcon className="h-4 w-4 text-gray-500 mr-1" />
-              {device}
+              <span className="text-xs md:text-sm">{device}</span>
             </span>
           }
           items={devices}
@@ -81,7 +81,7 @@ const FilterBar = ({ campaigns, onFilterChange }) => {
           title={
             <span className="flex items-center">
               <GlobeAltIcon className="h-4 w-4 text-gray-500 mr-1" />
-              {region}
+              <span className="text-xs md:text-sm">{region}</span>
             </span>
           }
           items={regions}
@@ -93,7 +93,7 @@ const FilterBar = ({ campaigns, onFilterChange }) => {
       </div>
 
       <div className="flex space-x-2">
-        <button className="bg-primary text-white px-4 py-2 rounded-md shadow-sm text-xs font-light hover:bg-primary-dark">
+        <button className="bg-primary text-white px-4 py-2 rounded-md shadow-sm text-xs md:text-sm font-light hover:bg-primary-dark">
           Export as CSV
         </button>
       </div>
