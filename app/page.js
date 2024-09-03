@@ -1,5 +1,6 @@
 "use client";
 
+import { ExclamationCircleIcon } from "@heroicons/react/24/solid";
 import { useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -33,8 +34,10 @@ export default function HomePage() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        Error loading campaigns: {error.message}
+      <div className="flex flex-col items-center justify-center min-h-screen text-gray-600">
+        <ExclamationCircleIcon className="h-24 w-24 text-red-500 mb-4" />
+        <h2 className="text-2xl font-semibold mb-2">Page Not Working</h2>
+        <p className="text-lg">{error.message}. Please try again later</p>
       </div>
     );
   }
