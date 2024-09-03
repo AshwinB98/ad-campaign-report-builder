@@ -1,4 +1,4 @@
-# Getting Started with Quiz Application
+# Getting Started with the Ad Campaign Report Builder
 
 The Ad Campaign Report Builder is a web application designed to help users generate, customize, and export reports based on advertising campaign data. The application allows users to drag and drop various metrics onto a canvas to create visual representations, such as charts and graphs, that can be tailored to specific needs.
 
