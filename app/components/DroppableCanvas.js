@@ -14,6 +14,7 @@ const DroppableCanvas = ({ campaigns, filters, charts, setCharts }) => {
   const containerRef = useRef(null);
   const containerWidth = useContainerDimensions(containerRef);
   const [layout, setLayout] = useState([]);
+  const [chartColors, setChartColors] = useState({});
   const calculateChartData = useChartData();
   const calculateDrillDownData = useDrillDownData(campaigns);
 
@@ -48,6 +49,10 @@ const DroppableCanvas = ({ campaigns, filters, charts, setCharts }) => {
     setLayout((prevLayout) =>
       prevLayout.filter((item) => item.i !== String(id))
     );
+    setChartColors((prevColors) => {
+      const { [id]: _, ...remainingColors } = prevColors;
+      return remainingColors;
+    });
   };
 
   const updateChartType = (id, type) => {
@@ -87,17 +92,19 @@ const DroppableCanvas = ({ campaigns, filters, charts, setCharts }) => {
             filters,
             selectedCampaignId
           );
+
+          const customColors = chartColors[chartId];
+          if (customColors) {
+            drillDownData.datasets.forEach((dataset) => {
+              dataset.backgroundColor = customColors.backgroundColor;
+              dataset.borderColor = customColors.borderColor;
+            });
+          }
+
           return {
             ...chart,
             originalData: chart.originalData || chart.data,
-            data: {
-              ...drillDownData,
-              datasets: drillDownData.datasets.map((dataset) => ({
-                ...dataset,
-                backgroundColor: chart.data.datasets[0].backgroundColor,
-                borderColor: chart.data.datasets[0].borderColor,
-              })),
-            },
+            data: drillDownData,
           };
         }
         return chart;
@@ -112,10 +119,26 @@ const DroppableCanvas = ({ campaigns, filters, charts, setCharts }) => {
   useEffect(() => {
     if (charts.length > 0) {
       setCharts((prevCharts) =>
-        prevCharts.map((chart) => ({
-          ...chart,
-          data: calculateChartData([chart.metric], campaigns, filters),
-        }))
+        prevCharts.map((chart) => {
+          const updatedData = calculateChartData(
+            [chart.metric],
+            campaigns,
+            filters
+          );
+
+          const customColors = chartColors[chart.id];
+          if (customColors) {
+            updatedData.datasets.forEach((dataset) => {
+              dataset.backgroundColor = customColors.backgroundColor;
+              dataset.borderColor = customColors.borderColor;
+            });
+          }
+
+          return {
+            ...chart,
+            data: updatedData,
+          };
+        })
       );
     }
   }, [filters, campaigns]);
@@ -167,6 +190,7 @@ const DroppableCanvas = ({ campaigns, filters, charts, setCharts }) => {
                   handleGoBack={handleGoBack}
                   handleDrillDown={handleDrillDown}
                   setCharts={setCharts}
+                  setChartColors={setChartColors}
                 />
               </div>
             ))}

@@ -11,6 +11,7 @@ const ChartCard = ({
   handleGoBack,
   handleDrillDown,
   setCharts,
+  setChartColors,
 }) => {
   const [showBgColorPicker, setShowBgColorPicker] = useState(false);
   const [showBorderColorPicker, setShowBorderColorPicker] = useState(false);
@@ -23,12 +24,18 @@ const ChartCard = ({
 
   const handleBgColorChange = (color) => {
     setBgColor(color.hex);
-    updateChartColors(chart.id, color.hex, borderColor, setCharts);
+    updateChartColors(
+      chart.id,
+      color.hex,
+      borderColor,
+      setCharts,
+      setChartColors
+    );
   };
 
   const handleBorderColorChange = (color) => {
     setBorderColor(color.hex);
-    updateChartColors(chart.id, bgColor, color.hex, setCharts);
+    updateChartColors(chart.id, bgColor, color.hex, setCharts, setChartColors);
   };
 
   return (

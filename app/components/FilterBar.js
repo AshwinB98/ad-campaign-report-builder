@@ -68,7 +68,7 @@ const FilterBar = ({ campaigns, onFilterChange, exportPDF, canExportPDF }) => {
           title={
             <span className="flex items-center">
               <DevicePhoneMobileIcon className="h-4 w-4 text-gray-500 mr-1" />
-              <span className="text-xs md:text-sm">{device}</span>
+              <span className="text-xs">{device}</span>
             </span>
           }
           items={devices}
@@ -82,7 +82,7 @@ const FilterBar = ({ campaigns, onFilterChange, exportPDF, canExportPDF }) => {
           title={
             <span className="flex items-center">
               <GlobeAltIcon className="h-4 w-4 text-gray-500 mr-1" />
-              <span className="text-xs md:text-sm">{region}</span>
+              <span className="text-xs">{region}</span>
             </span>
           }
           items={regions}

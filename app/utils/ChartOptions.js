@@ -30,18 +30,29 @@ const chartOptions = (chartType, handleElementClick) => {
   };
 };
 
-const updateChartColors = (id, bgColor, borderColor, setCharts) => {
+const updateChartColors = (
+  chartId,
+  backgroundColor,
+  borderColor,
+  setCharts,
+  setChartColors
+) => {
+  setChartColors((prevColors) => ({
+    ...prevColors,
+    [chartId]: { backgroundColor, borderColor },
+  }));
+
   setCharts((prevCharts) =>
     prevCharts.map((chart) =>
-      chart.id === id
+      chart.id === chartId
         ? {
             ...chart,
             data: {
               ...chart.data,
               datasets: chart.data.datasets.map((dataset) => ({
                 ...dataset,
-                backgroundColor: bgColor,
-                borderColor: borderColor,
+                backgroundColor,
+                borderColor,
               })),
             },
           }
